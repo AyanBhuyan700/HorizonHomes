@@ -4,7 +4,7 @@ import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
 
 function PropertyEdit() {
-  const url = "http://localhost:8081"
+  const url = "https://horizonhomes-backend.onrender.com"
     const userId = localStorage.getItem("id");
     const propertyId = localStorage.getItem("propertyId");
     const navigate = useNavigate();
