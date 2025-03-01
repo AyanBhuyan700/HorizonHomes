@@ -4,7 +4,7 @@ import React, { useState } from 'react'
 
 
 function PropertyAdd() {
-    const url = "http://localhost:8081"
+    const url = "https://horizonhomes-backend.onrender.com"
     const userId = localStorage.getItem("id")
     const [form, setForm] = useState({ title: "", description: "", price: "", location: "", type: "apartment", bedrooms: "", bathrooms: "", area: "", image: null, listedBy: userId || "", status: "sale" })
     const [formError, setFormError] = useState({ title: "", description: "", price: "", location: "", type: "apartment", bedrooms: "", bathrooms: "", area: "", image: "", listedBy: "", status: "sale" })
