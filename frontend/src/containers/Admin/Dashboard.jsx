@@ -4,7 +4,7 @@ import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
 
 function Dashboard() {
-  const url = "http://localhost:8081"
+  const url = "https://horizonhomes-backend.onrender.com"
   const [property, setProperty] = useState(null)
   const navigate = useNavigate()
 
