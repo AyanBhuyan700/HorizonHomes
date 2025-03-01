@@ -7,7 +7,7 @@ import { useNavigate } from "react-router-dom";
 const PaymentGateway = () => {
     const userId = localStorage.getItem("id");
     const propertyId = localStorage.getItem("propertyId");
-    const url = "http://localhost:8081"
+    const url = "https://horizonhomes-backend.onrender.com"
     const [property, setProperty] = useState(null);
     const [processing, setProcessing] = useState(false);
     const stripe = useStripe();
