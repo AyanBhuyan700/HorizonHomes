@@ -5,7 +5,7 @@ import Swal from "sweetalert2";
 
 function PropertyDetail() {
     const propertyId = localStorage.getItem("propertyId");
-    const url = "http://localhost:8081";
+    const url = "https://horizonhomes-backend.onrender.com";
     const navigate = useNavigate();
     const [property, setProperty] = useState(null);
     const [loading, setLoading] = useState(true);
