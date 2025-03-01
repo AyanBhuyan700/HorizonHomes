@@ -3,7 +3,7 @@ import { CardElement, useStripe, useElements } from "@stripe/react-stripe-js";
 import axios from "axios";
 
 const Checkout = ({ amount, userId, propertyId }) => {
-    const url = "http://localhost:8081"
+    const url = "https://horizonhomes-backend.onrender.com"
     const stripe = useStripe();
     const elements = useElements();
     const [loading, setLoading] = useState(false);
