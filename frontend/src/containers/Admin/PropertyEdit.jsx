@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
+import Loader from "../../components/Loader";
 
 function PropertyEdit() {
   const url = "https://horizonhomes-backend.onrender.com"
@@ -24,6 +25,8 @@ function PropertyEdit() {
     });
 
     const [formError, setFormError] = useState({});
+    const [loading, setLoading] = useState(true);
+    const [updating, setUpdating] = useState(false);
 
     useEffect(() => {
         if (propertyId) {
@@ -46,9 +49,11 @@ function PropertyEdit() {
                             status: data.status || "sale",
                         });
                     }
+                    setLoading(false);
                 })
                 .catch(() => {
                     Swal.fire("Error", "Unable to fetch property details", "error");
+                    setLoading(false);
                 });
         }
         window.scrollTo(0, 0);
@@ -62,6 +67,7 @@ function PropertyEdit() {
     };
 
     function updateProperty() {
+        setUpdating(true);
         try {
             let formData = new FormData()
             formData.append("title", form.title)
@@ -90,13 +96,18 @@ function PropertyEdit() {
                     }).then((p) => {
                         Swal.fire("Success", p.data.message, "success");
                         navigate("/dashboard");
+                        setUpdating(false);
                     }).catch(() => {
                         Swal.fire("Error", "Something went wrong while updating", "error");
+                        setUpdating(false);
                     });
+                } else {
+                    setUpdating(false);
                 }
             })
         } catch (err) {
             Swal.fire("Error", "Something went wrong while updating", "error");
+            setUpdating(false);
         }
     }
 
@@ -151,109 +162,117 @@ function PropertyEdit() {
 
     return (
         <div className="max-w-3xl mx-auto bg-white shadow-lg rounded-2xl p-6 relative top-16">
-            <h2 className="text-2xl font-bold text-gray-800 text-center mb-6">
-                Edit Property
-            </h2>
+            {loading ? (
+                <Loader />
+            ) : updating ? (
+                <Loader />
+            ) : (
+                <>
+                    <h2 className="text-2xl font-bold text-gray-800 text-center mb-6">
+                        Edit Property
+                    </h2>
 
-            <form className="space-y-4" onSubmit={onPropertySubmit}>
-                <div>
-                    <label className="block text-gray-600 font-medium">Title</label>
-                    <input type="text" className="w-full p-2 border rounded-lg focus:outline-blue-500" name="title" value={form.title} onChange={changeHandler} />
-                    <p className="text-red-500">{formError.title}</p>
-                </div>
+                    <form className="space-y-4" onSubmit={onPropertySubmit}>
+                        <div>
+                            <label className="block text-gray-600 font-medium">Title</label>
+                            <input type="text" className="w-full p-2 border rounded-lg focus:outline-blue-500" name="title" value={form.title} onChange={changeHandler} />
+                            <p className="text-red-500">{formError.title}</p>
+                        </div>
 
-                <div>
-                    <label className="block text-gray-600 font-medium">Description</label>
-                    <textarea className="w-full p-2 border rounded-lg focus:outline-blue-500" rows="3" name="description" value={form.description} onChange={changeHandler}></textarea>
-                    <p className="text-red-500">{formError.description}</p>
-                </div>
+                        <div>
+                            <label className="block text-gray-600 font-medium">Description</label>
+                            <textarea className="w-full p-2 border rounded-lg focus:outline-blue-500" rows="3" name="description" value={form.description} onChange={changeHandler}></textarea>
+                            <p className="text-red-500">{formError.description}</p>
+                        </div>
 
-                <div className="grid grid-cols-2 gap-4">
-                    <div>
-                        <label className="block text-gray-600 font-medium">Price ($)</label>
-                        <input type="number" className="w-full p-2 border rounded-lg focus:outline-blue-500" name="price" value={form.price} onChange={changeHandler} />
-                        <p className="text-red-500">{formError.price}</p>
-                    </div>
-                    <div>
-                        <label className="block text-gray-600 font-medium">Location</label>
-                        <input type="text" className="w-full p-2 border rounded-lg focus:outline-blue-500" name="location" value={form.location} onChange={changeHandler} />
-                        <p className="text-red-500">{formError.location}</p>
-                    </div>
-                </div>
+                        <div className="grid grid-cols-2 gap-4">
+                            <div>
+                                <label className="block text-gray-600 font-medium">Price ($)</label>
+                                <input type="number" className="w-full p-2 border rounded-lg focus:outline-blue-500" name="price" value={form.price} onChange={changeHandler} />
+                                <p className="text-red-500">{formError.price}</p>
+                            </div>
+                            <div>
+                                <label className="block text-gray-600 font-medium">Location</label>
+                                <input type="text" className="w-full p-2 border rounded-lg focus:outline-blue-500" name="location" value={form.location} onChange={changeHandler} />
+                                <p className="text-red-500">{formError.location}</p>
+                            </div>
+                        </div>
 
-                <div className="grid grid-cols-3 gap-4">
-                    <div>
-                        <label className="block text-gray-600 font-medium">Type</label>
-                        <select className="w-full p-2 border rounded-lg focus:outline-blue-500" name="type"
-                            value={form.type}
-                            onChange={changeHandler}>
-                            <option value="apartment">Apartment</option>
-                            <option value="house">House</option>
-                            <option value="villa">Villa</option>
-                            <option value="office">Office</option>
-                        </select>
-                    </div>
-                    <div>
-                        {form.type === "office" && (
-                            <label className="block text-gray-600 font-medium">Cabins</label>
-                        )}
+                        <div className="grid grid-cols-3 gap-4">
+                            <div>
+                                <label className="block text-gray-600 font-medium">Type</label>
+                                <select className="w-full p-2 border rounded-lg focus:outline-blue-500" name="type"
+                                    value={form.type}
+                                    onChange={changeHandler}>
+                                    <option value="apartment">Apartment</option>
+                                    <option value="house">House</option>
+                                    <option value="villa">Villa</option>
+                                    <option value="office">Office</option>
+                                </select>
+                            </div>
+                            <div>
+                                {form.type === "office" && (
+                                    <label className="block text-gray-600 font-medium">Cabins</label>
+                                )}
 
-                        {(form.type === "house" || form.type === "villa" || form.type === "apartment") && (
-                            <label className="block text-gray-600 font-medium">Bedrooms</label>
-                        )}
-                        <input type="number" className="w-full p-2 border rounded-lg focus:outline-blue-500" name="bedrooms" value={form.bedrooms} onChange={changeHandler} />
-                        <p className="text-red-500">{formError.bedrooms}</p>
-                    </div>
-                    <div>
-                        <label className="block text-gray-600 font-medium">Bathrooms</label>
-                        <input type="number" className="w-full p-2 border rounded-lg focus:outline-blue-500" name="bathrooms" value={form.bathrooms} onChange={changeHandler} />
-                        <p className="text-red-500">{formError.bathrooms}</p>
-                    </div>
-                </div>
+                                {(form.type === "house" || form.type === "villa" || form.type === "apartment") && (
+                                    <label className="block text-gray-600 font-medium">Bedrooms</label>
+                                )}
+                                <input type="number" className="w-full p-2 border rounded-lg focus:outline-blue-500" name="bedrooms" value={form.bedrooms} onChange={changeHandler} />
+                                <p className="text-red-500">{formError.bedrooms}</p>
+                            </div>
+                            <div>
+                                <label className="block text-gray-600 font-medium">Bathrooms</label>
+                                <input type="number" className="w-full p-2 border rounded-lg focus:outline-blue-500" name="bathrooms" value={form.bathrooms} onChange={changeHandler} />
+                                <p className="text-red-500">{formError.bathrooms}</p>
+                            </div>
+                        </div>
 
-                <div>
-                    <label className="block text-gray-600 font-medium">Area (sq ft)</label>
-                    <input type="number" className="w-full p-2 border rounded-lg focus:outline-blue-500" name="area" value={form.area} onChange={changeHandler} />
-                    <p className="text-red-500">{formError.area}</p>
-                </div>
+                        <div>
+                            <label className="block text-gray-600 font-medium">Area (sq ft)</label>
+                            <input type="number" className="w-full p-2 border rounded-lg focus:outline-blue-500" name="area" value={form.area} onChange={changeHandler} />
+                            <p className="text-red-500">{formError.area}</p>
+                        </div>
 
-                <div>
-                    <label className="block text-gray-600 font-medium">Status</label>
-                    <select className="w-full p-2 border rounded-lg focus:outline-blue-500" name="status"
-                        value={form.status}
-                        onChange={changeHandler}>
-                        <option value="sale">Sale</option>
-                        <option value="rent">Rent</option>
-                    </select>
-                </div>
+                        <div>
+                            <label className="block text-gray-600 font-medium">Status</label>
+                            <select className="w-full p-2 border rounded-lg focus:outline-blue-500" name="status"
+                                value={form.status}
+                                onChange={changeHandler}>
+                                <option value="sale">Sale</option>
+                                <option value="rent">Rent</option>
+                            </select>
+                        </div>
 
-                <div>
-                    <label className="block text-gray-600 font-medium">Listed By</label>
-                    <input
-                        className="w-full p-2 border rounded-lg bg-gray-200 text-gray-500 focus:outline-none cursor-not-allowed"
-                        name="listedBy"
-                        value={form.listedBy}
-                        readOnly
-                        disabled
-                        onCopy={(e) => e.preventDefault()}
-                        onCut={(e) => e.preventDefault()}
-                        onPaste={(e) => e.preventDefault()}
-                        style={{ userSelect: "none" }}
-                    />
-                    <p className="text-red-500">{formError.listedBy}</p>
-                </div>
+                        <div>
+                            <label className="block text-gray-600 font-medium">Listed By</label>
+                            <input
+                                className="w-full p-2 border rounded-lg bg-gray-200 text-gray-500 focus:outline-none cursor-not-allowed"
+                                name="listedBy"
+                                value={form.listedBy}
+                                readOnly
+                                disabled
+                                onCopy={(e) => e.preventDefault()}
+                                onCut={(e) => e.preventDefault()}
+                                onPaste={(e) => e.preventDefault()}
+                                style={{ userSelect: "none" }}
+                            />
+                            <p className="text-red-500">{formError.listedBy}</p>
+                        </div>
 
 
-                <div>
-                    <label className="block text-gray-600 font-medium">Upload Image</label>
-                    <input type="file" className="w-full p-2 border rounded-lg focus:outline-blue-500" accept="image/*" name='image' onChange={(e) => setForm({ ...form, image: e.target.files[0] })} />
-                    <p className="text-red-500">{formError.image}</p>
-                </div>
+                        <div>
+                            <label className="block text-gray-600 font-medium">Upload Image</label>
+                            <input type="file" className="w-full p-2 border rounded-lg focus:outline-blue-500" accept="image/*" name='image' onChange={(e) => setForm({ ...form, image: e.target.files[0] })} />
+                            <p className="text-red-500">{formError.image}</p>
+                        </div>
 
-                <button type="submit" className="w-full bg-blue-600 text-white font-semibold p-2 rounded-lg hover:bg-blue-700 transition" onClick={onPropertySubmit}>
-                    Edit Property
-                </button>
-            </form>
+                        <button type="submit" className="w-full bg-blue-600 text-white font-semibold p-2 rounded-lg hover:bg-blue-700 transition" onClick={onPropertySubmit}>
+                            Edit Property
+                        </button>
+                    </form>
+                </>
+            )}
         </div>
     );
 }

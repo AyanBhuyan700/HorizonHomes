@@ -3,6 +3,7 @@ import { useStripe, useElements, CardElement } from "@stripe/react-stripe-js";
 import Swal from "sweetalert2";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import Loader from "../components/Loader";
 
 const PaymentGateway = () => {
     const userId = localStorage.getItem("id");
@@ -10,6 +11,7 @@ const PaymentGateway = () => {
     const url = "https://horizonhomes-backend.onrender.com"
     const [property, setProperty] = useState(null);
     const [processing, setProcessing] = useState(false);
+    const [loading, setLoading] = useState(true);
     const stripe = useStripe();
     const elements = useElements();
     const navigate = useNavigate();
@@ -24,9 +26,11 @@ const PaymentGateway = () => {
         axios.get(`${url}/propertyDetail?id=${propertyId}`)
             .then((res) => {
                 setProperty(res.data.prtData);
+                setLoading(false);
             })
             .catch(() => {
                 Swal.fire("Error", "Unable to fetch data from API", "error");
+                setLoading(false);
             });
             window.scrollTo(0, 0);
     }, [propertyId, navigate]);
@@ -71,40 +75,43 @@ const PaymentGateway = () => {
         setProcessing(false);
     };
 
-    if (!property) {
-        return <div className="flex justify-center items-center min-h-screen text-red-500">Loading property details...</div>;
+    if (loading) {
+        return <Loader />;
     }
 
     return (
         <div className="flex justify-center items-center min-h-screen bg-gray-100">
-            <div className="bg-white shadow-lg rounded-2xl p-8 w-full max-w-lg">
-                {/* Property Details */}
-                <div className="mb-6">
-                    {property.image && (
-                        <img
-                            src={`${url}/${property.image}`}
-                            alt="Property"
-                            className="w-full h-48 object-cover rounded-lg"
-                        />
-                    )}
-                    <h2 className="text-2xl font-bold mt-4">{property.title}</h2>
-                    <p className="text-lg text-gray-600">💰 ${property.price?.toLocaleString()}</p>
-                </div>
+            {processing ? (
+                <Loader />
+            ) : (
+                <div className="bg-white shadow-lg rounded-2xl p-8 w-full max-w-lg">
+                    {/* Property Details */}
+                    <div className="mb-6">
+                        {property.image && (
+                            <img
+                                src={`${url}/${property.image}`}
+                                alt="Property"
+                                className="w-full h-48 object-cover rounded-lg"
+                            />
+                        )}
+                        <h2 className="text-2xl font-bold mt-4">{property.title}</h2>
+                        <p className="text-lg text-gray-600">💰 ${property.price?.toLocaleString()}</p>
+                    </div>
 
-                {/* Stripe Card Form */}
-                <div className="p-4 bg-gray-100 rounded-lg mb-4">
-                    <CardElement className="p-3 bg-white border rounded-lg shadow-sm" />
-                </div>
+                    {/* Stripe Card Form */}
+                    <div className="p-4 bg-gray-100 rounded-lg mb-4">
+                        <CardElement className="p-3 bg-white border rounded-lg shadow-sm" />
+                    </div>
 
-                {/* Pay Button */}
-                <button
-                    className="mt-4 w-full bg-blue-600 text-white py-3 rounded-lg text-lg font-semibold hover:bg-blue-700 transition duration-300 disabled:opacity-50"
-                    onClick={handlePayment}
-                    disabled={processing}
-                >
-                    {processing ? "Processing..." : `Pay $${property.price?.toLocaleString()}`}
-                </button>
-            </div>
+                    {/* Pay Button */}
+                    <button
+                        className="mt-4 w-full bg-blue-600 text-white py-3 rounded-lg text-lg font-semibold hover:bg-blue-700 transition duration-300"
+                        onClick={handlePayment}
+                    >
+                        Pay ${property.price?.toLocaleString()}
+                    </button>
+                </div>
+            )}
         </div>
     );
 };

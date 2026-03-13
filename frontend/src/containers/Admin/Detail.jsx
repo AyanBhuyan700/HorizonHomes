@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
 import { useNavigate } from 'react-router-dom'
+import Loader from "../../components/Loader";
 
 
 function Detail() {
@@ -59,7 +60,7 @@ function Detail() {
   }, [propertyId]);
 
   if (loading) {
-    return <p className="text-center text-gray-500">Loading property details...</p>;
+    return <Loader />;
   }
 
   if (!property) {

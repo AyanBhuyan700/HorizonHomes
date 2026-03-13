@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { CardElement, useStripe, useElements } from "@stripe/react-stripe-js";
 import axios from "axios";
+import Loader from "../components/Loader";
 
 const Checkout = ({ amount, userId, propertyId }) => {
     const url = "https://horizonhomes-backend.onrender.com"
@@ -39,10 +40,16 @@ const Checkout = ({ amount, userId, propertyId }) => {
 
     return (
         <form onSubmit={handlePayment}>
-            <CardElement />
-            <button type="submit" disabled={!stripe || loading}>
-                Pay ${amount}
-            </button>
+            {loading ? (
+                <Loader />
+            ) : (
+                <>
+                    <CardElement />
+                    <button type="submit" disabled={!stripe || loading}>
+                        Pay ${amount}
+                    </button>
+                </>
+            )}
         </form>
     );
 };

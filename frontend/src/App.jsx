@@ -1,6 +1,6 @@
 import React from "react";
 import Navbar from "./components/Navbar";
-import { Route, Routes } from 'react-router-dom'
+import { Navigate, Route, Routes } from 'react-router-dom'
 import About from "./containers/About";
 import Support from "./containers/Support";
 import Contact from "./containers/Contact";
@@ -38,6 +38,7 @@ function App() {
         <Route path="/propertyDetail" element={<PropertyDetail />}></Route>
         <Route path="/payment" element={<PaymentGateway />}></Route>
         <Route path="/success" element={<Success />}></Route>
+       <Route path="*" element={<Navigate to="/" />} />
       </Routes>
     </>
   )

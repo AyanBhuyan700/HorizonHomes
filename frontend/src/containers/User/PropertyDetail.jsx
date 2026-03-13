@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Swal from "sweetalert2";
+import Loader from "../../components/Loader";
 
 function PropertyDetail() {
     const propertyId = localStorage.getItem("propertyId");
@@ -25,7 +26,7 @@ function PropertyDetail() {
         window.scrollTo(0, 0);
     }, [propertyId, navigate]);
 
-    if (loading) return <div className="text-center p-6">Loading...</div>;
+    if (loading) return <Loader />;
 
     if (!property) return <div className="text-center p-6 text-red-500">Property not found.</div>;
 
