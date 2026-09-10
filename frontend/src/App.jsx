@@ -34,11 +34,13 @@ function App() {
         <Route path="/editProperty" element={<PropertyEdit />}></Route>
         <Route path="/detail" element={<Detail />}></Route>
         <Route path="/view" element={<PropertyView />}></Route>
+        <Route path="/properties" element={<PropertyView />}></Route>
+        <Route path="/property" element={<PropertyView />}></Route>
         <Route path="/faq" element={<Faq />}></Route>
         <Route path="/propertyDetail" element={<PropertyDetail />}></Route>
         <Route path="/payment" element={<PaymentGateway />}></Route>
         <Route path="/success" element={<Success />}></Route>
-       <Route path="*" element={<Navigate to="/" />} />
+        <Route path="*" element={<Navigate to="/" />} />
       </Routes>
     </>
   )
